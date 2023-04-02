@@ -32,30 +32,43 @@ class Logger {
     public static string $site_key = '';
 
     /**
+     * ApiKey auth
+     * @var string
+     */
+    public static ?string $api_key = null;
+
+    /**
      * Send log
      * @param string $message
      * @param string $type
-     * @param array $addional
+     * @param array $additional
      * @return void
      * @throws GuzzleException
      */
-    public static function log(string $message, string $type = 'INFO', array $addional = []) : array {
+    public static function log(string $message, string $type = 'INFO', array $additional = []) : array {
         $client = new Client([
             'base_uri' => self::$url,
         ]);
 
-        $response = $client->post('/api/log/add', [
+        $params =  [
             'headers' => [
                 'Content-Type' => 'application/json',
             ],
-            'auth' => [self::$username, self::$password],
             'body' => json_encode([
                 'site_key' => self::$site_key,
                 'type' => $type,
                 'message' => $message,
-                'additional' => $addional
+                'additional' => $additional
             ])
-        ]);
+        ];
+
+        if (!is_null(self::$api_key)) {
+            $params['headers']['apiKey'] = self::$api_key;
+        } else {
+            $params['auth'] = [self::$username, self::$password];
+        }
+
+        $response = $client->post('/api/log/add', $params);
 
         return json_decode($response->getBody()->getContents(), true);
     }
