@@ -29,7 +29,7 @@ class Logger {
      * Site key
      * @var string
      */
-    public static string $site_key = '';
+    public static string $cluster_key = '';
 
     /**
      * ApiKey auth
@@ -55,7 +55,7 @@ class Logger {
                 'Content-Type' => 'application/json',
             ],
             'body' => json_encode([
-                'site_key' => self::$site_key,
+                'cluster_key' => self::$cluster_key,
                 'type' => $type,
                 'message' => $message,
                 'additional' => $additional
